@@ -12,9 +12,9 @@ import { mockMetrics } from '@/data/mockData';
 const Index = () => {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-4 md:space-y-6">
+        {/* Key Metrics - 1 col mobile, 2 col tablet, 4 col desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
           <MetricCard
             title="Gesamte Konversationen"
             metric={mockMetrics.totalConversations}
@@ -46,25 +46,27 @@ const Index = () => {
           />
         </div>
 
-        {/* Charts Row 1 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Charts Row 1 - Stack on mobile/tablet, 2 col on desktop */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
           <ConversationVolumeChart />
           <PeakHoursHeatmap />
         </div>
 
-        {/* Charts Row 2 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Charts Row 2 - 1 col mobile, 2 col tablet, 3 col desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
           <ResponseQualityDonut />
           <ToolUsageBar />
-          <LanguagePie />
+          <div className="md:col-span-2 xl:col-span-1">
+            <LanguagePie />
+          </div>
         </div>
 
         {/* Conversation Table */}
         <ConversationTable />
 
         {/* Footer */}
-        <footer className="text-center py-6 border-t border-border">
-          <p className="text-sm text-muted-foreground">
+        <footer className="text-center py-4 md:py-6 border-t border-border">
+          <p className="text-xs md:text-sm text-muted-foreground">
             Powered by{' '}
             <span className="text-accent font-semibold">Uppoint AI</span>
           </p>
