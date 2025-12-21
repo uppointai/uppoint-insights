@@ -1,13 +1,76 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { MessageSquare, Clock, Zap, AlertTriangle } from 'lucide-react';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { MetricCard } from '@/components/metrics/MetricCard';
+import { ConversationVolumeChart } from '@/components/charts/ConversationVolumeChart';
+import { PeakHoursHeatmap } from '@/components/charts/PeakHoursHeatmap';
+import { ResponseQualityDonut } from '@/components/charts/ResponseQualityDonut';
+import { ToolUsageBar } from '@/components/charts/ToolUsageBar';
+import { LanguagePie } from '@/components/charts/LanguagePie';
+import { ConversationTable } from '@/components/tables/ConversationTable';
+import { mockMetrics } from '@/data/mockData';
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard
+            title="Gesamte Konversationen"
+            metric={mockMetrics.totalConversations}
+            icon={<MessageSquare className="w-5 h-5" />}
+            delay={0}
+          />
+          <MetricCard
+            title="Ø Antwortzeit"
+            metric={mockMetrics.avgResponseTime}
+            icon={<Clock className="w-5 h-5" />}
+            format="time"
+            invertTrend
+            delay={0.1}
+          />
+          <MetricCard
+            title="Tool-Nutzungsrate"
+            metric={mockMetrics.toolUsageRate}
+            icon={<Zap className="w-5 h-5" />}
+            format="percentage"
+            delay={0.2}
+          />
+          <MetricCard
+            title="Fallback-Rate"
+            metric={mockMetrics.fallbackRate}
+            icon={<AlertTriangle className="w-5 h-5" />}
+            format="percentage"
+            invertTrend
+            delay={0.3}
+          />
+        </div>
+
+        {/* Charts Row 1 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ConversationVolumeChart />
+          <PeakHoursHeatmap />
+        </div>
+
+        {/* Charts Row 2 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ResponseQualityDonut />
+          <ToolUsageBar />
+          <LanguagePie />
+        </div>
+
+        {/* Conversation Table */}
+        <ConversationTable />
+
+        {/* Footer */}
+        <footer className="text-center py-6 border-t border-border">
+          <p className="text-sm text-muted-foreground">
+            Powered by{' '}
+            <span className="text-accent font-semibold">Uppoint AI</span>
+          </p>
+        </footer>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
