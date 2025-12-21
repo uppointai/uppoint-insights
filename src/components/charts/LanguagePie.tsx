@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { mockLanguages } from '@/data/mockData';
 
 const COLORS = [
-  'hsl(80, 100%, 62%)',
+  'hsl(215, 55%, 45%)',
   'hsl(200, 80%, 55%)',
   'hsl(45, 100%, 60%)',
   'hsl(280, 70%, 60%)',
