@@ -13,12 +13,12 @@
   :root {
     /* Navy Blue Primary */
     --primary: 215 60% 10%;
-    --primary-foreground: 80 100% 62%;
+    --primary-foreground: 210 20% 98%;
     
-    /* Neon Green Accent */
-    --accent: 80 100% 62%;
-    --accent-foreground: 215 60% 10%;
-    --accent-glow: 80 100% 62%;
+    /* Navy Blue Accent */
+    --accent: 215 55% 45%;
+    --accent-foreground: 210 20% 98%;
+    --accent-glow: 215 55% 55%;
     
     /* Dark Charcoal Background */
     --background: 220 20% 7%;
@@ -32,12 +32,12 @@
     /* Sidebar */
     --sidebar-background: 215 45% 11%;
     --sidebar-foreground: 210 20% 75%;
-    --sidebar-primary: 80 100% 62%;
-    --sidebar-primary-foreground: 215 60% 10%;
+    --sidebar-primary: 215 55% 45%;
+    --sidebar-primary-foreground: 210 20% 98%;
     --sidebar-accent: 215 40% 16%;
     --sidebar-accent-foreground: 210 20% 90%;
     --sidebar-border: 215 30% 18%;
-    --sidebar-ring: 80 100% 62%;
+    --sidebar-ring: 215 55% 45%;
     
     /* Muted & Secondary */
     --muted: 220 15% 15%;
@@ -51,8 +51,8 @@
     --popover-foreground: 210 20% 90%;
     
     /* Status Colors */
-    --success: 80 100% 62%;
-    --success-foreground: 215 60% 10%;
+    --success: 160 70% 45%;
+    --success-foreground: 210 20% 98%;
     
     --warning: 45 100% 60%;
     --warning-foreground: 215 60% 10%;
@@ -66,13 +66,13 @@
     /* Borders & Inputs */
     --border: 215 25% 18%;
     --input: 215 25% 18%;
-    --ring: 80 100% 62%;
+    --ring: 215 55% 45%;
     
     /* Radius */
     --radius: 0.75rem;
     
     /* Chart Colors */
-    --chart-1: 80 100% 62%;
+    --chart-1: 215 55% 45%;
     --chart-2: 200 80% 55%;
     --chart-3: 45 100% 60%;
     --chart-4: 280 70% 60%;
@@ -81,7 +81,7 @@
 
   .dark {
     --primary: 215 60% 10%;
-    --primary-foreground: 80 100% 62%;
+    --primary-foreground: 210 20% 98%;
   }
 }
 
@@ -127,8 +127,8 @@
   .gradient-accent {
     background: linear-gradient(
       135deg,
-      hsl(80 100% 62%) 0%,
-      hsl(80 80% 50%) 100%
+      hsl(215 55% 45%) 0%,
+      hsl(215 60% 35%) 100%
     );
   }
   
@@ -142,7 +142,7 @@
   
   /* Text Gradient */
   .text-gradient-accent {
-    background: linear-gradient(135deg, hsl(80 100% 62%) 0%, hsl(80 80% 70%) 100%);
+    background: linear-gradient(135deg, hsl(215 55% 55%) 0%, hsl(215 50% 65%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

@@ -54,8 +54,8 @@ export const ConversationVolumeChart = () => {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorConversations" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(80, 100%, 62%)" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="hsl(80, 100%, 62%)" stopOpacity={0} />
+                <stop offset="0%" stopColor="hsl(215, 55%, 45%)" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="hsl(215, 55%, 45%)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -81,7 +81,7 @@ export const ConversationVolumeChart = () => {
             <Area
               type="monotone"
               dataKey="conversations"
-              stroke="hsl(80, 100%, 62%)"
+              stroke="hsl(215, 55%, 45%)"
               strokeWidth={2}
               fill="url(#colorConversations)"
             />

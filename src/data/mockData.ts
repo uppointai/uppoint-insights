@@ -257,7 +257,7 @@ export const getResponseQuality = (conversations: ChatAnalytics[]) => {
   const errors = conversations.filter(c => c.tool_error).length;
   
   return [
-    { name: 'Erfolgreich', value: successful, color: 'hsl(80, 100%, 62%)' },
+    { name: 'Erfolgreich', value: successful, color: 'hsl(160, 70%, 45%)' },
     { name: 'Fallback', value: fallback, color: 'hsl(45, 100%, 60%)' },
     { name: 'Fehler', value: errors, color: 'hsl(0, 72%, 55%)' },
   ];
