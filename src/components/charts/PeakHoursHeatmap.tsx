@@ -2,12 +2,19 @@ import { motion } from 'framer-motion';
 import { mockHourlyHeatmap } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 const hours = Array.from({ length: 24 }, (_, i) => i);
 
 export const PeakHoursHeatmap = () => {
+  const isMobile = useIsMobile();
   const maxValue = Math.max(...mockHourlyHeatmap.map((d) => d.value));
+
+  // Show fewer hours on mobile
+  const displayHours = isMobile
+    ? hours.filter((h) => h % 3 === 0)
+    : hours;
 
   const getHeatmapColor = (value: number) => {
     const intensity = value / maxValue;
@@ -30,22 +37,21 @@ export const PeakHoursHeatmap = () => {
       transition={{ duration: 0.5, delay: 0.3 }}
       className="chart-container"
     >
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-foreground">Spitzenzeiten</h3>
-        <p className="text-sm text-muted-foreground">
+      <div className="mb-4 md:mb-6">
+        <h3 className="text-base md:text-lg font-semibold text-foreground">Spitzenzeiten</h3>
+        <p className="text-xs md:text-sm text-muted-foreground">
           Konversationsverteilung nach Tag und Uhrzeit
         </p>
       </div>
 
-      <div className="overflow-x-auto">
-        <div className="min-w-[600px]">
+      <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+        <div className={cn('min-w-[300px]', !isMobile && 'min-w-[600px]')}>
           {/* Hours Header */}
-          <div className="flex gap-1 mb-2 ml-12">
-            {hours.filter((h) => h % 3 === 0).map((hour) => (
+          <div className="flex gap-0.5 md:gap-1 mb-2 ml-8 md:ml-12">
+            {(isMobile ? hours.filter((h) => h % 6 === 0) : hours.filter((h) => h % 3 === 0)).map((hour) => (
               <div
                 key={hour}
-                className="text-xs text-muted-foreground"
-                style={{ width: '36px', textAlign: 'center' }}
+                className="text-[10px] md:text-xs text-muted-foreground flex-1 text-center"
               >
                 {hour.toString().padStart(2, '0')}
               </div>
@@ -53,14 +59,14 @@ export const PeakHoursHeatmap = () => {
           </div>
 
           {/* Heatmap Grid */}
-          <div className="space-y-1">
+          <div className="space-y-0.5 md:space-y-1">
             {days.map((day, dayIndex) => (
-              <div key={day} className="flex items-center gap-2">
-                <span className="w-8 text-xs text-muted-foreground text-right">
+              <div key={day} className="flex items-center gap-1 md:gap-2">
+                <span className="w-6 md:w-8 text-[10px] md:text-xs text-muted-foreground text-right">
                   {day}
                 </span>
-                <div className="flex gap-0.5">
-                  {hours.map((hour) => {
+                <div className="flex gap-[1px] md:gap-0.5 flex-1">
+                  {displayHours.map((hour) => {
                     const value = getValue(dayIndex, hour);
                     return (
                       <Tooltip key={hour}>
@@ -74,7 +80,8 @@ export const PeakHoursHeatmap = () => {
                               stiffness: 500,
                             }}
                             className={cn(
-                              'w-3 h-6 rounded-sm cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-accent/50',
+                              'flex-1 h-4 md:h-6 rounded-[2px] md:rounded-sm cursor-pointer transition-all duration-200',
+                              'hover:ring-1 md:hover:ring-2 hover:ring-accent/50 touch-manipulation',
                               getHeatmapColor(value)
                             )}
                           />
@@ -96,16 +103,16 @@ export const PeakHoursHeatmap = () => {
           </div>
 
           {/* Legend */}
-          <div className="flex items-center gap-2 mt-4 justify-end">
-            <span className="text-xs text-muted-foreground">Weniger</span>
+          <div className="flex items-center gap-2 mt-3 md:mt-4 justify-end">
+            <span className="text-[10px] md:text-xs text-muted-foreground">Weniger</span>
             <div className="flex gap-0.5">
-              <div className="w-3 h-3 rounded-sm bg-accent/10" />
-              <div className="w-3 h-3 rounded-sm bg-accent/30" />
-              <div className="w-3 h-3 rounded-sm bg-accent/50" />
-              <div className="w-3 h-3 rounded-sm bg-accent/70" />
-              <div className="w-3 h-3 rounded-sm bg-accent" />
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-sm bg-accent/10" />
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-sm bg-accent/30" />
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-sm bg-accent/50" />
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-sm bg-accent/70" />
+              <div className="w-2 h-2 md:w-3 md:h-3 rounded-sm bg-accent" />
             </div>
-            <span className="text-xs text-muted-foreground">Mehr</span>
+            <span className="text-[10px] md:text-xs text-muted-foreground">Mehr</span>
           </div>
         </div>
       </div>

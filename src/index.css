@@ -97,6 +97,11 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+  
+  /* Safe area for mobile devices with notches */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 @layer components {
