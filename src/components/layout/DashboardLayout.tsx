@@ -19,9 +19,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex w-full">
+    <div className="min-h-screen bg-background w-full relative">
       <Sidebar mobileOpen={mobileMenuOpen} onMobileClose={handleMobileMenuClose} />
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-[260px] transition-all duration-300">
         <Header onMobileMenuToggle={handleMobileMenuToggle} />
         <main className="flex-1 p-3 md:p-4 lg:p-6 overflow-auto pb-20 md:pb-6">
           {children}

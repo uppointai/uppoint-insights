@@ -15,6 +15,11 @@ export const Skeleton = ({ className, style }: SkeletonProps) => (
   />
 );
 
+// Generic loading skeleton component
+export const LoadingSkeleton = ({ className, style }: SkeletonProps) => (
+  <Skeleton className={className} style={style} />
+);
+
 export const MetricCardSkeleton = () => (
   <div className="metric-card">
     <div className="flex items-center justify-between mb-4">

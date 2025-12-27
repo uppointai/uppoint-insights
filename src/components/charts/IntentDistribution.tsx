@@ -1,41 +1,25 @@
 import { motion } from 'framer-motion';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
-import { useConversationVolume } from '@/hooks/useAnalytics';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useIntentDistribution } from '@/hooks/useAnalytics';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
 import { useDateRange } from '@/contexts/DateRangeContext';
 
-export const ConversationVolumeChart = () => {
+export const IntentDistribution = () => {
   const isMobile = useIsMobile();
   const { startDate, endDate } = useDateRange();
-  const { data: volumeData, isLoading, error } = useConversationVolume(30, startDate, endDate);
-  
-  // Show fewer data points on mobile for better readability
-  const data = (volumeData || [])
-    .filter((_, index) => !isMobile || index % 2 === 0)
-    .map((item) => ({
-      ...item,
-      date: new Date(item.date).toLocaleDateString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-      }),
-    }));
+  const { data: intentData, isLoading, error } = useIntentDistribution(startDate, endDate);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+        <div className="bg-card border border-border rounded-lg p-3 shadow-lg z-50 backdrop-blur-sm">
           <p className="text-sm font-medium text-foreground mb-1">{label}</p>
           <p className="text-sm text-accent font-semibold">
             {payload[0].value.toLocaleString('de-DE')} Konversationen
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {payload[0].payload.percentage}% aller Konversationen
           </p>
         </div>
       );
@@ -48,10 +32,10 @@ export const ConversationVolumeChart = () => {
       <div className="chart-container">
         <div className="mb-4 md:mb-6">
           <h3 className="text-base md:text-lg font-semibold text-foreground">
-            Konversationsvolumen
+            Intent-Verteilung
           </h3>
           <p className="text-xs md:text-sm text-muted-foreground">
-            Anzahl der Konversationen über Zeit
+            Verteilung der Nachrichten-Intents
           </p>
         </div>
         <LoadingSkeleton className="h-[200px] md:h-[300px]" />
@@ -59,75 +43,78 @@ export const ConversationVolumeChart = () => {
     );
   }
 
-  if (error) {
-    console.error('ConversationVolumeChart error:', error);
+  if (error || !intentData || intentData.length === 0) {
     return (
       <div className="chart-container">
         <div className="mb-4 md:mb-6">
           <h3 className="text-base md:text-lg font-semibold text-foreground">
-            Konversationsvolumen
+            Intent-Verteilung
           </h3>
           <p className="text-xs md:text-sm text-muted-foreground">
-            Anzahl der Konversationen über Zeit
+            Verteilung der Nachrichten-Intents
           </p>
         </div>
-        <div className="h-[200px] md:h-[300px] flex flex-col items-center justify-center text-muted-foreground gap-2 p-4">
-          <p>Fehler beim Laden der Daten</p>
-          <p className="text-xs text-center">
-            {error instanceof Error ? error.message : 'Unbekannter Fehler'}
-          </p>
-          <p className="text-xs text-center mt-2">
-            Bitte überprüfen Sie die Browser-Konsole für Details
-          </p>
+        <div className="h-[200px] md:h-[300px] flex items-center justify-center text-muted-foreground">
+          {error ? 'Fehler beim Laden der Daten' : 'Keine Daten verfügbar'}
         </div>
       </div>
     );
   }
 
+  // Format intent names for better display
+  const formatIntent = (intent: string) => {
+    return intent
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
+  const chartData = intentData.map((item) => ({
+    ...item,
+    intent: formatIntent(item.intent),
+  }));
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
+      transition={{ duration: 0.5, delay: 0.4 }}
       className="chart-container"
     >
       <div className="mb-4 md:mb-6">
         <h3 className="text-base md:text-lg font-semibold text-foreground">
-          Konversationsvolumen
+          Intent-Verteilung
         </h3>
         <p className="text-xs md:text-sm text-muted-foreground">
-          Anzahl der Konversationen über Zeit
+          Verteilung der Nachrichten-Intents
         </p>
       </div>
 
       <div className="h-[200px] md:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ left: isMobile ? -20 : 0, right: 0 }}>
-            <defs>
-              <linearGradient id="colorConversations" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(215, 55%, 45%)" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="hsl(215, 55%, 45%)" stopOpacity={0} />
-              </linearGradient>
-            </defs>
+          <BarChart
+            data={chartData}
+            margin={{ left: isMobile ? -20 : 0, right: 10, top: 10, bottom: 5 }}
+          >
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="hsl(215, 25%, 18%)"
               vertical={false}
             />
             <XAxis
-              dataKey="date"
+              dataKey="intent"
               stroke="hsl(210, 15%, 55%)"
               fontSize={isMobile ? 10 : 12}
               tickLine={false}
               axisLine={false}
-              interval={isMobile ? 2 : 'preserveStartEnd'}
+              angle={isMobile ? -45 : -30}
+              textAnchor="end"
+              height={isMobile ? 60 : 80}
             />
             <YAxis
               stroke="hsl(210, 15%, 55%)"
               fontSize={isMobile ? 10 : 12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => isMobile ? `${Math.round(value / 1000)}k` : value.toLocaleString('de-DE')}
               width={isMobile ? 30 : 50}
             />
             <Tooltip 
@@ -140,16 +127,15 @@ export const ConversationVolumeChart = () => {
               }}
               cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
             />
-            <Area
-              type="monotone"
-              dataKey="conversations"
-              stroke="hsl(215, 55%, 45%)"
-              strokeWidth={2}
-              fill="url(#colorConversations)"
+            <Bar
+              dataKey="count"
+              fill="hsl(215, 55%, 45%)"
+              radius={[4, 4, 0, 0]}
             />
-          </AreaChart>
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </motion.div>
   );
 };
+

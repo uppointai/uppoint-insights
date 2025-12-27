@@ -1,15 +1,21 @@
 import { motion } from 'framer-motion';
-import { mockHourlyHeatmap } from '@/data/mockData';
+import { useHourlyHeatmap } from '@/hooks/useAnalytics';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
+import { useDateRange } from '@/contexts/DateRangeContext';
 
 const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 const hours = Array.from({ length: 24 }, (_, i) => i);
 
 export const PeakHoursHeatmap = () => {
   const isMobile = useIsMobile();
-  const maxValue = Math.max(...mockHourlyHeatmap.map((d) => d.value));
+  const { startDate, endDate } = useDateRange();
+  const { data: heatmapData, isLoading, error } = useHourlyHeatmap(startDate, endDate);
+  const maxValue = heatmapData && heatmapData.length > 0 
+    ? Math.max(...heatmapData.map((d) => d.value))
+    : 0;
 
   // Show fewer hours on mobile
   const displayHours = isMobile
@@ -26,9 +32,40 @@ export const PeakHoursHeatmap = () => {
   };
 
   const getValue = (day: number, hour: number) => {
-    const item = mockHourlyHeatmap.find((d) => d.day === day && d.hour === hour);
+    if (!heatmapData) return 0;
+    const item = heatmapData.find((d) => d.day === day && d.hour === hour);
     return item?.value || 0;
   };
+
+  if (isLoading) {
+    return (
+      <div className="chart-container">
+        <div className="mb-4 md:mb-6">
+          <h3 className="text-base md:text-lg font-semibold text-foreground">Spitzenzeiten</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">
+            Konversationsverteilung nach Tag und Uhrzeit
+          </p>
+        </div>
+        <LoadingSkeleton className="h-[200px]" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="chart-container">
+        <div className="mb-4 md:mb-6">
+          <h3 className="text-base md:text-lg font-semibold text-foreground">Spitzenzeiten</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">
+            Konversationsverteilung nach Tag und Uhrzeit
+          </p>
+        </div>
+        <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+          Fehler beim Laden der Daten
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div

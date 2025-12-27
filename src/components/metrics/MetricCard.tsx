@@ -1,14 +1,20 @@
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { MetricData } from '@/data/mockData';
+
+export interface MetricData {
+  value: number;
+  previousValue: number;
+  trend: 'up' | 'down' | 'neutral';
+  percentChange: number;
+}
 
 interface MetricCardProps {
   title: string;
   metric: MetricData;
   icon: React.ReactNode;
   suffix?: string;
-  format?: 'number' | 'time' | 'percentage';
+  format?: 'number' | 'time' | 'percentage' | 'duration';
   invertTrend?: boolean;
   delay?: number;
 }
@@ -28,6 +34,18 @@ export const MetricCard = ({
         return `${value}s`;
       case 'percentage':
         return `${value}%`;
+      case 'duration':
+        // Format seconds into hours, minutes, seconds
+        const hours = Math.floor(value / 3600);
+        const minutes = Math.floor((value % 3600) / 60);
+        const seconds = Math.floor(value % 60);
+        if (hours > 0) {
+          return `${hours}h ${minutes}m`;
+        } else if (minutes > 0) {
+          return `${minutes}m ${seconds}s`;
+        } else {
+          return `${seconds}s`;
+        }
       default:
         return value.toLocaleString('de-DE');
     }
@@ -86,9 +104,11 @@ export const MetricCard = ({
           <div
             className={cn(
               'flex items-center gap-1 text-xs md:text-sm font-medium px-2 py-1 rounded-md',
-              isPositive
-                ? 'bg-success/10 text-success'
-                : 'bg-destructive/10 text-destructive'
+              metric.trend === 'neutral'
+                ? 'bg-muted/10 text-muted-foreground'
+                : isPositive
+                  ? 'bg-success/10 text-success'
+                  : 'bg-destructive/10 text-destructive'
             )}
           >
             <TrendIcon className="w-3 h-3" />

@@ -1,15 +1,53 @@
 import { motion } from 'framer-motion';
-import { mockToolUsage } from '@/data/mockData';
+import { useToolUsage } from '@/hooks/useAnalytics';
 import { cn } from '@/lib/utils';
 import { CheckCircle, AlertCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
+import { useDateRange } from '@/contexts/DateRangeContext';
 
 export const ToolUsageBar = () => {
   const isMobile = useIsMobile();
-  const maxCount = Math.max(...mockToolUsage.map((t) => t.count));
+  const { startDate, endDate } = useDateRange();
+  const { data: toolUsageData, isLoading, error } = useToolUsage(startDate, endDate);
+  const maxCount = toolUsageData && toolUsageData.length > 0
+    ? Math.max(...toolUsageData.map((t) => t.count))
+    : 0;
   
   // Show fewer tools on mobile
-  const displayTools = isMobile ? mockToolUsage.slice(0, 5) : mockToolUsage;
+  const displayTools = toolUsageData
+    ? (isMobile ? toolUsageData.slice(0, 5) : toolUsageData)
+    : [];
+
+  if (isLoading) {
+    return (
+      <div className="chart-container">
+        <div className="mb-4 md:mb-6">
+          <h3 className="text-base md:text-lg font-semibold text-foreground">Tool-Nutzung</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">
+            Häufigkeit und Erfolgsrate der genutzten Tools
+          </p>
+        </div>
+        <LoadingSkeleton className="h-[200px]" />
+      </div>
+    );
+  }
+
+  if (error || !toolUsageData || toolUsageData.length === 0) {
+    return (
+      <div className="chart-container">
+        <div className="mb-4 md:mb-6">
+          <h3 className="text-base md:text-lg font-semibold text-foreground">Tool-Nutzung</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">
+            Häufigkeit und Erfolgsrate der genutzten Tools
+          </p>
+        </div>
+        <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+          {error ? 'Fehler beim Laden der Daten' : 'Keine Daten verfügbar'}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
