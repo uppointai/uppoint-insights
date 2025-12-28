@@ -1,4 +1,5 @@
 import { useState, createContext, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -26,7 +27,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: '/', active: true },
+  { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
   { icon: MessageSquare, label: 'Konversationen', href: '/conversations' },
   { icon: BarChart3, label: 'Analysen', href: '/analytics' },
   { icon: Zap, label: 'Tool-Nutzung', href: '/tools' },
@@ -50,8 +51,15 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const sidebarWidth = collapsed ? 80 : 260;
+
+  // Determine active route
+  const activeNavItems = navItems.map(item => ({
+    ...item,
+    active: location.pathname === item.href,
+  }));
 
   return (
     <SidebarContext.Provider value={{ collapsed, width: sidebarWidth }}>
@@ -120,7 +128,7 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
           {/* Navigation */}
           <nav className="flex-1 py-4 px-3 overflow-y-auto">
             <div className="space-y-1">
-              {navItems.map((item) => (
+              {activeNavItems.map((item) => (
                 <NavButton
                   key={item.label}
                   item={item}
@@ -194,7 +202,7 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
               {/* Navigation */}
               <nav className="flex-1 py-4 px-3 overflow-y-auto">
                 <div className="space-y-1">
-                  {navItems.map((item) => (
+                  {activeNavItems.map((item) => (
                     <NavButton
                       key={item.label}
                       item={item}

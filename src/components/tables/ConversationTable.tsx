@@ -163,14 +163,16 @@ export const ConversationTable = () => {
 
       {/* Mobile Card View */}
       <div className="md:hidden divide-y divide-border/50 relative">
-        {filteredConversations.map((conv, index) => (
+        {filteredConversations.map((conv, index) => {
+          const rowId = `${conv.session_id}-${conv.timestamp}-${index}`;
+          return (
           <div
-            key={`mobile-${conv.session_id}-${index}`}
+            key={`mobile-${rowId}`}
             className={cn(
               "p-4 touch-manipulation transition-all duration-300",
               isLoading && conversations.length === 0 && "opacity-40 pointer-events-none"
             )}
-            onClick={() => !isLoading && setExpandedRow(expandedRow === conv.session_id ? null : conv.session_id)}
+            onClick={() => !isLoading && setExpandedRow(expandedRow === rowId ? null : rowId)}
           >
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -211,7 +213,7 @@ export const ConversationTable = () => {
               )}
             </div>
             <AnimatePresence>
-              {expandedRow === conv.session_id && (
+              {expandedRow === rowId && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -262,7 +264,8 @@ export const ConversationTable = () => {
               )}
             </AnimatePresence>
           </div>
-        ))}
+          );
+        })}
         {/* Loading overlay for mobile */}
         {isLoading && conversations.length === 0 && displayConversations.length > 0 && (
           <div className="absolute inset-0 bg-card/60 backdrop-blur-[2px] flex items-center justify-center z-20 pointer-events-none">
@@ -289,16 +292,18 @@ export const ConversationTable = () => {
             </tr>
           </thead>
           <tbody className="relative">
-            {filteredConversations.map((conv, index) => (
-                <Fragment key={`fragment-${conv.session_id}-${index}`}>
+            {filteredConversations.map((conv, index) => {
+              const rowId = `${conv.session_id}-${conv.timestamp}-${index}`;
+              return (
+                <Fragment key={`fragment-${rowId}`}>
                   <tr
-                    key={`row-${conv.session_id}-${index}`}
+                    key={`row-${rowId}`}
                     className={cn(
                       'border-b border-border/50 hover:bg-card-hover transition-all duration-300 cursor-pointer',
-                      expandedRow === conv.session_id && 'bg-card-hover',
+                      expandedRow === rowId && 'bg-card-hover',
                       isLoading && conversations.length === 0 && 'opacity-40 pointer-events-none'
                     )}
-                    onClick={() => !isLoading && setExpandedRow(expandedRow === conv.session_id ? null : conv.session_id)}
+                    onClick={() => !isLoading && setExpandedRow(expandedRow === rowId ? null : rowId)}
                   >
                 <td className="py-4 px-6 text-sm text-muted-foreground whitespace-nowrap">{formatDate(conv.timestamp)}</td>
                 <td className="py-4 px-6 text-sm text-foreground">{truncateText(conv.user_message)}</td>
@@ -338,10 +343,10 @@ export const ConversationTable = () => {
                     {!conv.has_price_info && !conv.has_availability_info && '—'}
                   </div>
                 </td>
-                <td className="py-4 px-6">{expandedRow === conv.session_id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</td>
+                <td className="py-4 px-6">{expandedRow === rowId ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</td>
               </tr>
-              {expandedRow === conv.session_id && (
-                <tr key={`expanded-${conv.session_id}-${index}`} className="bg-card-hover">
+              {expandedRow === rowId && (
+                <tr key={`expanded-${rowId}`} className="bg-card-hover">
                   <td colSpan={7} className="py-4 px-6">
                     <div className="space-y-3">
                       <div>
@@ -375,7 +380,8 @@ export const ConversationTable = () => {
                 </tr>
               )}
                 </Fragment>
-              ))}
+              );
+            })}
           </tbody>
         </table>
         {/* Loading overlay wrapper for better positioning */}

@@ -11,7 +11,10 @@ import {
   fetchPopularSearchTerms,
   fetchErrorTypes,
   fetchInfoCoverage,
+  fetchSessions,
+  fetchSessionDetails,
   ConversationFilters,
+  SessionFilters,
 } from '@/services/analyticsService';
 import type {
   ParsedConversationRow,
@@ -25,6 +28,8 @@ import type {
   SearchTermData,
   ErrorTypeData,
   InfoCoverageData,
+  SessionMetrics,
+  SessionDetail,
 } from '@/services/analyticsService';
 
 // Hook for fetching conversations
@@ -135,6 +140,28 @@ export const useInfoCoverage = (startDate?: string, endDate?: string) => {
     queryKey: ['info-coverage', startDate, endDate],
     queryFn: () => fetchInfoCoverage(startDate, endDate),
     staleTime: 60000,
+  });
+};
+
+// Hook for fetching sessions grouped by session_id
+export const useSessions = (filters: SessionFilters = {}) => {
+  return useQuery<{ data: SessionMetrics[]; count: number }>({
+    queryKey: ['sessions', filters],
+    queryFn: () => fetchSessions(filters),
+    staleTime: 30000, // 30 seconds
+  });
+};
+
+// Hook for fetching session details with conversations
+export const useSessionDetails = (sessionId: string | null) => {
+  return useQuery<SessionDetail>({
+    queryKey: ['session-details', sessionId],
+    queryFn: () => {
+      if (!sessionId) throw new Error('Session ID is required');
+      return fetchSessionDetails(sessionId);
+    },
+    enabled: !!sessionId,
+    staleTime: 30000,
   });
 };
 

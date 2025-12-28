@@ -632,3 +632,182 @@ export const fetchInfoCoverage = async (
   };
 };
 
+// Fetch sessions grouped by session_id
+export interface SessionMetrics {
+  session_id: string;
+  total_chats: number;
+  first_message_timestamp: string;
+  last_message_timestamp: string;
+  total_duration_seconds: number;
+  avg_response_time_seconds: number;
+  languages: string[];
+  has_errors: boolean;
+  error_count: number;
+  tool_usage_count: number;
+}
+
+export interface SessionFilters {
+  startDate?: string;
+  endDate?: string;
+  minChats?: number; // Minimum number of chats per session (default: 3)
+}
+
+export const fetchSessions = async (
+  filters: SessionFilters = {}
+): Promise<{ data: SessionMetrics[]; count: number }> => {
+  let query = supabase.from(TABLE_NAME).select('*');
+
+  if (filters.startDate) {
+    query = query.gte('timestamp', filters.startDate);
+  }
+  if (filters.endDate) {
+    query = query.lte('timestamp', filters.endDate);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    throw new Error(`Failed to fetch sessions: ${error.message}`);
+  }
+
+  const conversations = (data || []).map(parseConversationRow);
+  
+  // Group by session_id
+  const sessionMap: Record<string, ParsedConversationRow[]> = {};
+  conversations.forEach((conv) => {
+    if (!sessionMap[conv.session_id]) {
+      sessionMap[conv.session_id] = [];
+    }
+    sessionMap[conv.session_id].push(conv);
+  });
+
+  // Calculate metrics for each session
+  const sessions: SessionMetrics[] = [];
+  const minChats = filters.minChats ?? 3;
+
+  Object.entries(sessionMap).forEach(([sessionId, sessionConversations]) => {
+    // Filter out sessions with less than minChats
+    if (sessionConversations.length < minChats) {
+      return;
+    }
+
+    // Sort by timestamp
+    sessionConversations.sort((a, b) => 
+      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    );
+
+    const firstTimestamp = sessionConversations[0].timestamp;
+    const lastTimestamp = sessionConversations[sessionConversations.length - 1].timestamp;
+    
+    // Calculate total duration
+    const totalDurationMs = new Date(lastTimestamp).getTime() - new Date(firstTimestamp).getTime();
+    const totalDurationSeconds = totalDurationMs / 1000;
+
+    // Calculate average response time
+    const responseTimes = sessionConversations
+      .map((c) => c.response_time)
+      .filter((time): time is number => time !== null && time !== undefined);
+    
+    const avgResponseTime = responseTimes.length > 0
+      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length / 1000 // Convert ms to seconds
+      : 0;
+
+    // Get unique languages
+    const languages = [...new Set(sessionConversations.map((c) => c.detected_language))];
+
+    // Count errors and tool usage
+    const errorCount = sessionConversations.filter((c) => c.has_error).length;
+    const toolUsageCount = sessionConversations.filter((c) => c.tool_count > 0).length;
+
+    sessions.push({
+      session_id: sessionId,
+      total_chats: sessionConversations.length,
+      first_message_timestamp: firstTimestamp,
+      last_message_timestamp: lastTimestamp,
+      total_duration_seconds: totalDurationSeconds,
+      avg_response_time_seconds: avgResponseTime,
+      languages,
+      has_errors: errorCount > 0,
+      error_count: errorCount,
+      tool_usage_count: toolUsageCount,
+    });
+  });
+
+  // Sort by last message timestamp (most recent first)
+  sessions.sort((a, b) => 
+    new Date(b.last_message_timestamp).getTime() - new Date(a.last_message_timestamp).getTime()
+  );
+
+  return {
+    data: sessions,
+    count: sessions.length,
+  };
+};
+
+// Fetch detailed conversations for a specific session
+export interface SessionDetail {
+  session_id: string;
+  conversations: ParsedConversationRow[];
+  metrics: SessionMetrics;
+}
+
+export const fetchSessionDetails = async (sessionId: string): Promise<SessionDetail> => {
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .eq('session_id', sessionId)
+    .order('timestamp', { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch session details: ${error.message}`);
+  }
+
+  const conversations = (data || []).map(parseConversationRow);
+
+  if (conversations.length === 0) {
+    throw new Error(`No conversations found for session: ${sessionId}`);
+  }
+
+  // Calculate session metrics (same logic as fetchSessions)
+  conversations.sort((a, b) => 
+    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  );
+
+  const firstTimestamp = conversations[0].timestamp;
+  const lastTimestamp = conversations[conversations.length - 1].timestamp;
+  
+  const totalDurationMs = new Date(lastTimestamp).getTime() - new Date(firstTimestamp).getTime();
+  const totalDurationSeconds = totalDurationMs / 1000;
+
+  const responseTimes = conversations
+    .map((c) => c.response_time)
+    .filter((time): time is number => time !== null && time !== undefined);
+  
+  const avgResponseTime = responseTimes.length > 0
+    ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length / 1000
+    : 0;
+
+  const languages = [...new Set(conversations.map((c) => c.detected_language))];
+  const errorCount = conversations.filter((c) => c.has_error).length;
+  const toolUsageCount = conversations.filter((c) => c.tool_count > 0).length;
+
+  const metrics: SessionMetrics = {
+    session_id: sessionId,
+    total_chats: conversations.length,
+    first_message_timestamp: firstTimestamp,
+    last_message_timestamp: lastTimestamp,
+    total_duration_seconds: totalDurationSeconds,
+    avg_response_time_seconds: avgResponseTime,
+    languages,
+    has_errors: errorCount > 0,
+    error_count: errorCount,
+    tool_usage_count: toolUsageCount,
+  };
+
+  return {
+    session_id: sessionId,
+    conversations,
+    metrics,
+  };
+};
+
