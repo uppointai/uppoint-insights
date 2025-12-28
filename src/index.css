@@ -1,11 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import '@fontsource/inter/400.css';
 @import '@fontsource/inter/500.css';
 @import '@fontsource/inter/600.css';
 @import '@fontsource/inter/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Uppoint AI Premium Dashboard Design System */
 
@@ -193,6 +193,22 @@
   
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground));
+  }
+  
+  /* Override Recharts default tooltip styling */
+  .recharts-tooltip-wrapper {
+    background-color: transparent !important;
+  }
+  
+  .recharts-default-tooltip {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  
+  .recharts-tooltip-cursor {
+    fill: rgba(255, 255, 255, 0.1) !important;
   }
 }
 
