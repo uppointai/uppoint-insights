@@ -1,7 +1,8 @@
 import { supabase } from '@/lib/supabase';
+import { getTableName } from '@/lib/utils';
 import { ConversationRow, ParsedConversationRow, parseConversationRow } from '@/types/supabase';
 
-const TABLE_NAME = 'chat_analytics_yash_test';
+const TABLE_NAME = getTableName();
 
 // Fetch all conversations with optional filters
 export interface ConversationFilters {

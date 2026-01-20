@@ -14,12 +14,15 @@ Your `.env.local` should look like this:
 ```env
 VITE_SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_SUPABASE_TABLE_NAME=chat_analytics_yash_test
 ```
+
+**Note:** `VITE_SUPABASE_TABLE_NAME` is optional. If not set, it defaults to `chat_analytics_yash_test`.
 
 ## Step 2: Verify Your Table Exists
 
 1. In Supabase dashboard, go to **Table Editor**
-2. Make sure you have a table named: `chat_analytics_yash_test`
+2. Make sure you have a table with the name specified in `VITE_SUPABASE_TABLE_NAME` (or `chat_analytics_yash_test` if not set)
 3. The table should have data (at least a few rows to test)
 
 ## Step 3: Install Dependencies (if not already done)
@@ -62,7 +65,7 @@ You should see:
 **Solution:**
 - Verify your Supabase URL and key are correct
 - Check browser console (F12) for detailed error
-- Make sure table name is exactly: `chat_analytics_yash_test`
+- Make sure table name matches `VITE_SUPABASE_TABLE_NAME` in `.env.local` (or `chat_analytics_yash_test` if not set)
 - Check if Row Level Security (RLS) is enabled - you may need to disable it or create a policy
 
 ### No Data Showing
