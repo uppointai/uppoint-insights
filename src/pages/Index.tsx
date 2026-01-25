@@ -38,7 +38,7 @@ const Index = () => {
                 100
             )
           : 0;
-        const trend = percentChange === 0 
+        const trend: 'up' | 'down' | 'neutral' = percentChange === 0 
           ? 'neutral' 
           : (metrics.previousPeriod
               ? (metrics.totalConversations > metrics.previousPeriod.totalConversations ? 'up' : 'down')
@@ -61,7 +61,7 @@ const Index = () => {
                 100
             )
           : 0;
-        const trend = percentChange === 0
+        const trend: 'up' | 'down' | 'neutral' = percentChange === 0
           ? 'neutral'
           : (metrics.previousPeriod
               ? (metrics.avgResponseTime < metrics.previousPeriod.avgResponseTime ? 'up' : 'down')
@@ -84,7 +84,7 @@ const Index = () => {
                 100
             )
           : 0;
-        const trend = percentChange === 0
+        const trend: 'up' | 'down' | 'neutral' = percentChange === 0
           ? 'neutral'
           : (metrics.previousPeriod
               ? (metrics.toolUsageRate > metrics.previousPeriod.toolUsageRate ? 'up' : 'down')
@@ -107,7 +107,7 @@ const Index = () => {
                 100
             )
           : 0;
-        const trend = percentChange === 0
+        const trend: 'up' | 'down' | 'neutral' = percentChange === 0
           ? 'neutral'
           : (metrics.previousPeriod
               ? (metrics.fallbackRate < metrics.previousPeriod.fallbackRate ? 'up' : 'down')
@@ -130,7 +130,7 @@ const Index = () => {
                 100
             )
           : 0;
-        const trend = percentChange === 0
+        const trend: 'up' | 'down' | 'neutral' = percentChange === 0
           ? 'neutral'
           : (metrics.previousPeriod
               ? (metrics.totalTimeSaved > metrics.previousPeriod.totalTimeSaved ? 'up' : 'down')

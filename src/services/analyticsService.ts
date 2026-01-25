@@ -2,6 +2,9 @@ import { supabase } from '@/lib/supabase';
 import { getTableName } from '@/lib/utils';
 import { ConversationRow, ParsedConversationRow, parseConversationRow } from '@/types/supabase';
 
+// Re-export types for use in other modules
+export type { ParsedConversationRow };
+
 const TABLE_NAME = getTableName();
 
 // Fetch all conversations with optional filters
