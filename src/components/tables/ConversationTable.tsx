@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useConversationsWithPagination } from '@/hooks/useAnalytics';
 import type { ParsedConversationRow } from '@/services/analyticsService';
-import { cn, getTableName } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
@@ -115,7 +115,7 @@ export const ConversationTable = () => {
           <p className="text-xs mt-4">
             Bitte überprüfen Sie:
             <br />• Supabase Credentials in .env.local
-            <br />• Tabelle "{getTableName()}" existiert
+            <br />• Tabelle "chat_analytics_yash_test" existiert
             <br />• Browser-Konsole (F12) für Details
           </p>
         </div>

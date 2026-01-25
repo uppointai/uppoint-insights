@@ -6,7 +6,6 @@
    ```env
    VITE_SUPABASE_URL=your_supabase_project_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   VITE_SUPABASE_TABLE_NAME=chat_analytics_yash_test
    ```
 
 2. **Get your Supabase credentials:**
@@ -16,9 +15,8 @@
    - Copy the "anon public" key → `VITE_SUPABASE_ANON_KEY`
 
 3. **Table Name:**
-   - The app uses the table name from `VITE_SUPABASE_TABLE_NAME` environment variable
-   - If not set, it defaults to `chat_analytics_yash_test`
-   - Make sure the table exists in your Supabase database
+   - The app is configured to use table: `chat_analytics_yash_test`
+   - Make sure this table exists in your Supabase database
 
 4. **Start the development server:**
    ```bash
@@ -27,7 +25,7 @@
 
 ## Database Table Structure
 
-Your Supabase table (configured via `VITE_SUPABASE_TABLE_NAME`, default: `chat_analytics_yash_test`) should have the following columns:
+Your Supabase table `chat_analytics_yash_test` should have the following columns:
 
 - `session_id` (text)
 - `timestamp` (timestamp)

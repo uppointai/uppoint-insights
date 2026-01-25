@@ -32,7 +32,7 @@ Open your browser's Developer Tools (F12) and check:
 ### 3. Verify Supabase Table
 
 1. Go to Supabase Dashboard → **Table Editor**
-2. Check if table exists (name from `VITE_SUPABASE_TABLE_NAME` in `.env.local`, or `chat_analytics_yash_test` if not set)
+2. Check if table exists: `chat_analytics_yash_test`
 3. **Table name must match exactly** (case-sensitive)
 4. Make sure the table has at least some data
 
@@ -41,13 +41,13 @@ Open your browser's Developer Tools (F12) and check:
 If RLS is enabled, you need to create a policy:
 
 1. Go to Supabase Dashboard → **Authentication** → **Policies**
-2. Select your table (name from `VITE_SUPABASE_TABLE_NAME` in `.env.local`, or `chat_analytics_yash_test` if not set)
+2. Select table: `chat_analytics_yash_test`
 3. Click **"New Policy"**
 4. Choose **"For full customization"**
-5. Use this SQL (replace `your_table_name` with your actual table name):
+5. Use this SQL:
    ```sql
    CREATE POLICY "Allow public read access" 
-   ON your_table_name 
+   ON chat_analytics_yash_test 
    FOR SELECT 
    USING (true);
    ```
@@ -63,7 +63,7 @@ Open browser console (F12) and you should see:
 🔍 Supabase Connection Debug
   URL: https://xxxxx...
   Key: eyJhbGciOiJIUzI1...
-  Table: [your configured table name]
+  Table: chat_analytics_yash_test
   ✅ Environment variables found
 ```
 
@@ -79,10 +79,9 @@ If you see ❌, your .env.local is not set up correctly.
 #### "Failed to fetch conversations: new row violates row-level security policy"
 - **Solution:** Disable RLS or create a SELECT policy (see #4 above)
 
-#### "relation '[table_name]' does not exist"
-- **Solution:** Check table name matches `VITE_SUPABASE_TABLE_NAME` in `.env.local` (or `chat_analytics_yash_test` if not set)
+#### "relation 'chat_analytics_yash_test' does not exist"
+- **Solution:** Check table name is exactly `chat_analytics_yash_test`
 - Check you're connected to the correct Supabase project
-- Verify the table name is spelled correctly (case-sensitive)
 
 #### "Invalid API key"
 - **Solution:** Verify your anon key is correct
@@ -120,7 +119,7 @@ If both show `undefined`, your .env.local is not being loaded.
 
 4. **Try a simple test query:**
    - In Supabase Dashboard → SQL Editor
-   - Run: `SELECT COUNT(*) FROM [your_table_name];` (replace with your table name from `VITE_SUPABASE_TABLE_NAME`)
+   - Run: `SELECT COUNT(*) FROM chat_analytics_yash_test;`
    - Should return a number
 
 ### Need More Help?
