@@ -1,7 +1,8 @@
 import { supabase } from '@/lib/supabase';
 import { ConversationRow, ParsedConversationRow, parseConversationRow } from '@/types/supabase';
+import { getAnalyticsTableName } from '@/lib/config';
 
-const TABLE_NAME = 'chat_analytics_yash_test';
+const getTableName = () => getAnalyticsTableName();
 
 // Fetch all conversations with optional filters
 export interface ConversationFilters {
@@ -18,7 +19,7 @@ export const fetchConversations = async (
   filters: ConversationFilters = {}
 ): Promise<{ data: ParsedConversationRow[]; count: number }> => {
   let query = supabase
-    .from(TABLE_NAME)
+    .from(getTableName())
     .select('*', { count: 'exact' })
     .order('timestamp', { ascending: false });
 
@@ -79,7 +80,7 @@ export interface Metrics {
 }
 
 export const fetchMetrics = async (startDate?: string, endDate?: string): Promise<Metrics> => {
-  let query = supabase.from(TABLE_NAME).select('*');
+  let query = supabase.from(getTableName()).select('*');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -126,7 +127,7 @@ export const fetchMetrics = async (startDate?: string, endDate?: string): Promis
     const previousEnd = start;
 
     const prevQuery = supabase
-      .from(TABLE_NAME)
+      .from(getTableName())
       .select('*')
       .gte('timestamp', previousStart.toISOString())
       .lt('timestamp', previousEnd.toISOString());
@@ -178,7 +179,7 @@ export const fetchConversationVolume = async (
   startDate?: string,
   endDate?: string
 ): Promise<ConversationVolumeData[]> => {
-  let query = supabase.from(TABLE_NAME).select('timestamp');
+  let query = supabase.from(getTableName()).select('timestamp');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -222,7 +223,7 @@ export const fetchHourlyHeatmap = async (
   startDate?: string,
   endDate?: string
 ): Promise<HourlyData[]> => {
-  let query = supabase.from(TABLE_NAME).select('timestamp, hour_of_day, day_of_week');
+  let query = supabase.from(getTableName()).select('timestamp, hour_of_day, day_of_week');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -271,7 +272,7 @@ export const fetchToolUsage = async (
   startDate?: string,
   endDate?: string
 ): Promise<ToolUsageData[]> => {
-  let query = supabase.from(TABLE_NAME).select('tool_used, has_error, workflow_status');
+  let query = supabase.from(getTableName()).select('tool_used, has_error, workflow_status');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -320,7 +321,7 @@ export const fetchLanguageDistribution = async (
   startDate?: string,
   endDate?: string
 ): Promise<LanguageData[]> => {
-  let query = supabase.from(TABLE_NAME).select('detected_language');
+  let query = supabase.from(getTableName()).select('detected_language');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -369,7 +370,7 @@ export const fetchResponseQuality = async (
   startDate?: string,
   endDate?: string
 ): Promise<ResponseQualityData[]> => {
-  let query = supabase.from(TABLE_NAME).select('workflow_status, has_error');
+  let query = supabase.from(getTableName()).select('workflow_status, has_error');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -460,7 +461,7 @@ export const fetchIntentDistribution = async (
   startDate?: string,
   endDate?: string
 ): Promise<IntentData[]> => {
-  let query = supabase.from(TABLE_NAME).select('message_intent');
+  let query = supabase.from(getTableName()).select('message_intent');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -503,7 +504,7 @@ export const fetchPopularSearchTerms = async (
   endDate?: string,
   limit: number = 20
 ): Promise<SearchTermData[]> => {
-  let query = supabase.from(TABLE_NAME).select('search_term');
+  let query = supabase.from(getTableName()).select('search_term');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -543,7 +544,7 @@ export const fetchErrorTypes = async (
   startDate?: string,
   endDate?: string
 ): Promise<ErrorTypeData[]> => {
-  let query = supabase.from(TABLE_NAME).select('error_type, has_error');
+  let query = supabase.from(getTableName()).select('error_type, has_error');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -602,7 +603,7 @@ export const fetchInfoCoverage = async (
   startDate?: string,
   endDate?: string
 ): Promise<InfoCoverageData> => {
-  let query = supabase.from(TABLE_NAME).select('has_price_info, has_availability_info');
+  let query = supabase.from(getTableName()).select('has_price_info, has_availability_info');
 
   if (startDate) {
     query = query.gte('timestamp', startDate);
@@ -655,7 +656,7 @@ export interface SessionFilters {
 export const fetchSessions = async (
   filters: SessionFilters = {}
 ): Promise<{ data: SessionMetrics[]; count: number }> => {
-  let query = supabase.from(TABLE_NAME).select('*');
+  let query = supabase.from(getTableName()).select('*');
 
   if (filters.startDate) {
     query = query.gte('timestamp', filters.startDate);
@@ -753,7 +754,7 @@ export interface SessionDetail {
 
 export const fetchSessionDetails = async (sessionId: string): Promise<SessionDetail> => {
   const { data, error } = await supabase
-    .from(TABLE_NAME)
+    .from(getTableName())
     .select('*')
     .eq('session_id', sessionId)
     .order('timestamp', { ascending: true });
