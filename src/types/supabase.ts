@@ -37,6 +37,7 @@ export interface ConversationRow {
   has_availability_info: boolean;
   response_quality: number;
   response_time: number | null;
+  responsetimestamp: number | null;
 }
 
 // Helper type for parsed tools_used
