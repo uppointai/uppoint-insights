@@ -4,15 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   MessageSquare,
-  BarChart3,
   Settings,
   HelpCircle,
   ChevronLeft,
   ChevronRight,
-  Zap,
-  Users,
-  Search,
-  Globe,
   Menu,
   X,
   ThumbsUp,
@@ -31,11 +26,6 @@ const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
   { icon: MessageSquare, label: 'Konversationen', href: '/conversations' },
   { icon: ThumbsUp, label: 'Feedback', href: '/feedback' },
-  { icon: BarChart3, label: 'Analysen', href: '/analytics' },
-  { icon: Zap, label: 'Tool-Nutzung', href: '/tools' },
-  { icon: Search, label: 'Suche', href: '/search' },
-  { icon: Globe, label: 'Sprachen', href: '/languages' },
-  { icon: Users, label: 'Nutzer', href: '/users' },
 ];
 
 const bottomNavItems: NavItem[] = [

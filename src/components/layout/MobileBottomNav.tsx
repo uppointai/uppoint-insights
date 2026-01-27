@@ -3,8 +3,7 @@ import { useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   MessageSquare,
-  BarChart3,
-  Zap,
+  ThumbsUp,
   Settings,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,8 +18,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
   { icon: MessageSquare, label: 'Chats', href: '/conversations' },
-  { icon: BarChart3, label: 'Analysen', href: '/analytics' },
-  { icon: Zap, label: 'Tools', href: '/tools' },
+  { icon: ThumbsUp, label: 'Feedback', href: '/feedback' },
   { icon: Settings, label: 'Mehr', href: '/settings' },
 ];
 
