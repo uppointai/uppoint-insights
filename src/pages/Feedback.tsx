@@ -15,10 +15,13 @@ import {
   ChevronRight,
   ChevronDown,
   ChevronUp,
+  Eye,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { fetchFeedback, fetchFeedbackStats, type FeedbackWithAnalytics } from '@/services/feedbackService';
+import { FeedbackConversationModal } from '@/components/feedback/FeedbackConversationModal';
+import { useSessionDetails } from '@/hooks/useAnalytics';
 
 const Feedback = () => {
   const { startDate, endDate } = useDateRange();
@@ -26,7 +29,13 @@ const Feedback = () => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [feedbackFilter, setFeedbackFilter] = useState<'all' | 'thumbs_up' | 'thumbs_down'>('all');
+  const [selectedFeedback, setSelectedFeedback] = useState<{ sessionId: string; responseTimestamp: number; feedbackType: 'thumbs_up' | 'thumbs_down' } | null>(null);
   const itemsPerPage = 10;
+
+  // Fetch session details when a feedback is selected for viewing conversation
+  const { data: sessionDetail, isLoading: isLoadingDetail, error: detailError } = useSessionDetails(
+    selectedFeedback?.sessionId || null
+  );
 
   const { data: feedbackData, isLoading, error } = useQuery({
     queryKey: ['feedback', { startDate, endDate, searchTerm, feedbackFilter, currentPage }],
@@ -62,16 +71,6 @@ const Feedback = () => {
     });
   };
 
-  const formatTimestamp = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('de-DE', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  };
 
   if (isLoading || isLoadingStats) {
     return (
@@ -226,7 +225,6 @@ const Feedback = () => {
                 <tr className="border-b border-border">
                   <th className="text-left p-4 text-sm font-semibold text-muted-foreground">Feedback</th>
                   <th className="text-left p-4 text-sm font-semibold text-muted-foreground">Session ID</th>
-                  <th className="text-left p-4 text-sm font-semibold text-muted-foreground">Response Timestamp</th>
                   <th className="text-left p-4 text-sm font-semibold text-muted-foreground">Kommentar</th>
                   <th className="text-left p-4 text-sm font-semibold text-muted-foreground">Erstellt am</th>
                   <th className="text-left p-4 text-sm font-semibold text-muted-foreground"></th>
@@ -235,7 +233,7 @@ const Feedback = () => {
               <tbody>
                 {feedback.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
                       Kein Feedback gefunden
                     </td>
                   </tr>
@@ -249,8 +247,14 @@ const Feedback = () => {
                         const key = `${item.sessionId}-${item.responsetimestamp}`;
                         setExpandedRow(expandedRow === key ? null : key);
                       }}
+                      onViewConversation={() => {
+                        setSelectedFeedback({
+                          sessionId: item.sessionId,
+                          responseTimestamp: item.responsetimestamp,
+                          feedbackType: item.feedback as 'thumbs_up' | 'thumbs_down',
+                        });
+                      }}
                       formatDate={formatDate}
-                      formatTimestamp={formatTimestamp}
                     />
                   ))
                 )}
@@ -296,6 +300,20 @@ const Feedback = () => {
             </div>
           )}
         </div>
+
+        {/* Feedback Conversation Modal */}
+        <FeedbackConversationModal
+          sessionId={selectedFeedback?.sessionId || null}
+          responseTimestamp={selectedFeedback?.responseTimestamp || null}
+          feedbackType={selectedFeedback?.feedbackType || null}
+          open={!!selectedFeedback}
+          onOpenChange={(open) => {
+            if (!open) setSelectedFeedback(null);
+          }}
+          sessionDetail={sessionDetail}
+          isLoading={isLoadingDetail}
+          error={detailError as Error | null}
+        />
       </div>
     </DashboardLayout>
   );
@@ -305,11 +323,11 @@ interface FeedbackRowProps {
   item: FeedbackWithAnalytics;
   expanded: boolean;
   onToggle: () => void;
+  onViewConversation: () => void;
   formatDate: (date: string) => string;
-  formatTimestamp: (timestamp: number) => string;
 }
 
-function FeedbackRow({ item, expanded, onToggle, formatDate, formatTimestamp }: FeedbackRowProps) {
+function FeedbackRow({ item, expanded, onToggle, onViewConversation, formatDate }: FeedbackRowProps) {
   const isPositive = item.feedback === 'thumbs_up';
 
   return (
@@ -338,9 +356,6 @@ function FeedbackRow({ item, expanded, onToggle, formatDate, formatTimestamp }: 
             {item.sessionId.substring(0, 8)}...
           </div>
         </td>
-        <td className="p-4 text-sm text-muted-foreground">
-          {formatTimestamp(item.responsetimestamp)}
-        </td>
         <td className="p-4">
           <div className="max-w-xs truncate text-sm text-muted-foreground">
             {item.comment || '-'}
@@ -349,28 +364,50 @@ function FeedbackRow({ item, expanded, onToggle, formatDate, formatTimestamp }: 
         <td className="p-4 text-sm text-muted-foreground">
           {formatDate(item.created_at)}
         </td>
-        <td className="p-4">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
-            className="p-1 hover:bg-muted rounded"
-          >
-            {expanded ? (
-              <ChevronUp className="w-4 h-4 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            )}
-          </button>
+        <td className="p-4 min-w-[140px]">
+          <div className="flex items-center gap-2 flex-nowrap">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onViewConversation();
+              }}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 dark:hover:bg-primary/80 transition-colors flex items-center gap-1.5 shadow-sm dark:shadow-md z-10 relative whitespace-nowrap flex-shrink-0 border border-primary/20 dark:border-primary/30"
+              title="Vollständige Konversation anzeigen"
+            >
+              <Eye className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Konversation</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle();
+              }}
+              className="p-1 hover:bg-muted rounded flex-shrink-0"
+              title={expanded ? 'Weniger anzeigen' : 'Mehr anzeigen'}
+            >
+              {expanded ? (
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              )}
+            </button>
+          </div>
         </td>
       </tr>
       {expanded && item.analytics && (
         <tr>
-          <td colSpan={6} className="p-4 bg-muted/30">
+          <td colSpan={5} className="p-4 bg-muted/30">
             <div className="space-y-3">
-              <h4 className="font-semibold text-sm mb-2">Zugehörige Chat-Daten:</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="font-semibold text-sm">Zugehörige Chat-Daten:</h4>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                {item.username && item.username.trim() !== '' && (
+                  <div>
+                    <span className="text-muted-foreground">Username:</span>
+                    <p className="mt-1 font-medium">{item.username}</p>
+                  </div>
+                )}
                 <div>
                   <span className="text-muted-foreground">User Message:</span>
                   <p className="mt-1 font-medium">{item.analytics.user_message || '-'}</p>

@@ -8,6 +8,7 @@ export interface FeedbackRow {
   feedback: string;
   comment: string | null;
   created_at: string;
+  username: string | null;
 }
 
 export interface FeedbackWithAnalytics extends FeedbackRow {
@@ -79,13 +80,18 @@ export const fetchFeedback = async (
 
   // Map feedback data to our interface
   // Handle both camelCase (sessionId) and snake_case (session_id) column names
-  const feedbackRows: FeedbackRow[] = feedbackData.map((row: any) => ({
-    sessionId: row.sessionId || row.session_id,
-    responsetimestamp: row.responsetimestamp || row.response_timestamp,
-    feedback: row.feedback,
-    comment: row.comment,
-    created_at: row.created_at || row.createdAt,
-  }));
+  const feedbackRows: FeedbackRow[] = feedbackData.map((row: any) => {
+    const username = row.username || row.user_name;
+    // Convert empty string to null for consistent handling
+    return {
+      sessionId: row.sessionId || row.session_id,
+      responsetimestamp: row.responsetimestamp || row.response_timestamp,
+      feedback: row.feedback,
+      comment: row.comment,
+      created_at: row.created_at || row.createdAt,
+      username: username && username.trim() !== '' ? username : null,
+    };
+  });
 
   // Fetch corresponding analytics data for each feedback
   // We need to match by session_id and responsetimestamp
