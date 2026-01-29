@@ -4,15 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   MessageSquare,
-  BarChart3,
-  Settings,
-  HelpCircle,
   ChevronLeft,
   ChevronRight,
-  Zap,
-  Users,
-  Search,
-  Globe,
   Menu,
   X,
   ThumbsUp,
@@ -31,16 +24,6 @@ const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
   { icon: MessageSquare, label: 'Konversationen', href: '/conversations' },
   { icon: ThumbsUp, label: 'Feedback', href: '/feedback' },
-  { icon: BarChart3, label: 'Analysen', href: '/analytics' },
-  { icon: Zap, label: 'Tool-Nutzung', href: '/tools' },
-  { icon: Search, label: 'Suche', href: '/search' },
-  { icon: Globe, label: 'Sprachen', href: '/languages' },
-  { icon: Users, label: 'Nutzer', href: '/users' },
-];
-
-const bottomNavItems: NavItem[] = [
-  { icon: Settings, label: 'Einstellungen', href: '/settings' },
-  { icon: HelpCircle, label: 'Hilfe', href: '/help' },
 ];
 
 // Context to share collapsed state
@@ -141,20 +124,6 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
             </div>
           </nav>
 
-          {/* Bottom Navigation */}
-          <div className="py-4 px-3 border-t border-sidebar-border">
-            <div className="space-y-1">
-              {bottomNavItems.map((item) => (
-                <NavButton
-                  key={item.label}
-                  item={item}
-                  collapsed={collapsed}
-                  onMobileClose={onMobileClose}
-                />
-              ))}
-            </div>
-          </div>
-
           {/* Collapse Toggle - Desktop Only */}
           <button
             onClick={() => setCollapsed(!collapsed)}
@@ -215,19 +184,6 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
                 </div>
               </nav>
 
-              {/* Bottom Navigation */}
-              <div className="py-4 px-3 border-t border-sidebar-border safe-area-bottom">
-                <div className="space-y-1">
-                  {bottomNavItems.map((item) => (
-                    <NavButton
-                      key={item.label}
-                      item={item}
-                      collapsed={false}
-                      onMobileClose={onMobileClose}
-                    />
-                  ))}
-                </div>
-              </div>
             </motion.aside>
           )}
         </AnimatePresence>
