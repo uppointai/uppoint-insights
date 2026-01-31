@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   MessageSquare,
+  Settings,
+  HelpCircle,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -24,6 +26,11 @@ const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
   { icon: MessageSquare, label: 'Konversationen', href: '/conversations' },
   { icon: ThumbsUp, label: 'Feedback', href: '/feedback' },
+];
+
+const bottomNavItems: NavItem[] = [
+  { icon: Settings, label: 'Einstellungen', href: '/settings' },
+  { icon: HelpCircle, label: 'Hilfe', href: '/help' },
 ];
 
 // Context to share collapsed state

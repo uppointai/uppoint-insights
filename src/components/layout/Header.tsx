@@ -1,4 +1,4 @@
-import { Bell, RefreshCw, Download, Calendar, ChevronDown, User } from 'lucide-react';
+import { RefreshCw, Calendar, ChevronDown, Sun, Moon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,6 +10,7 @@ import {
 import { useState } from 'react';
 import { MobileMenuButton } from './Sidebar';
 import { useDateRange, type DateRange } from '@/contexts/DateRangeContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface HeaderProps {
   onMobileMenuToggle: () => void;
@@ -18,6 +19,7 @@ interface HeaderProps {
 export const Header = ({ onMobileMenuToggle }: HeaderProps) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { selectedRange, setSelectedRange, refresh } = useDateRange();
+  const { theme, toggleTheme } = useTheme();
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -76,6 +78,21 @@ export const Header = ({ onMobileMenuToggle }: HeaderProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Theme Toggle Button */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleTheme}
+          className="min-h-[44px] min-w-[44px] cursor-pointer hover:bg-accent/10 transition-colors"
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4" />
+          ) : (
+            <Moon className="w-4 h-4" />
+          )}
+        </Button>
+
         {/* Refresh Button */}
         <Button
           variant="outline"
@@ -91,35 +108,6 @@ export const Header = ({ onMobileMenuToggle }: HeaderProps) => {
             <RefreshCw className="w-4 h-4" />
           </motion.div>
         </Button>
-
-        {/* Export Button - Hidden on small mobile */}
-        <Button variant="outline" size="icon" className="min-h-[44px] min-w-[44px] hidden sm:flex">
-          <Download className="w-4 h-4" />
-        </Button>
-
-        {/* Notifications */}
-        <Button variant="outline" size="icon" className="relative min-h-[44px] min-w-[44px]">
-          <Bell className="w-4 h-4" />
-          <span className="absolute -top-1 -right-1 w-2 h-2 bg-accent rounded-full animate-pulse" />
-        </Button>
-
-        {/* User Menu - Simplified on mobile */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="gap-2 pl-2 min-h-[44px]">
-              <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-                <User className="w-4 h-4 text-accent" />
-              </div>
-              <span className="text-sm font-medium hidden md:inline">Admin</span>
-              <ChevronDown className="w-4 h-4 opacity-50 hidden md:inline" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 z-50">
-            <DropdownMenuItem>Profil</DropdownMenuItem>
-            <DropdownMenuItem>Einstellungen</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Abmelden</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </header>
   );

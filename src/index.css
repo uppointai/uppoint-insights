@@ -11,7 +11,76 @@
 
 @layer base {
   :root {
-    /* Navy Blue Primary */
+    /* Light Mode - Navy Blue Primary */
+    --primary: 215 60% 10%;
+    --primary-foreground: 210 20% 98%;
+    
+    /* Navy Blue Accent */
+    --accent: 215 55% 45%;
+    --accent-foreground: 210 20% 98%;
+    --accent-glow: 215 55% 55%;
+    
+    /* Light Background - Very light gray like #f6f7fa */
+    --background: 220 15% 97%;
+    --foreground: 215 60% 10%;
+    
+    /* Card Surfaces - Pure white for cards */
+    --card: 0 0% 100%;
+    --card-foreground: 215 60% 10%;
+    --card-hover: 0 0% 98%;
+    
+    /* Sidebar - Slightly darker light gray */
+    --sidebar-background: 220 10% 96%;
+    --sidebar-foreground: 215 60% 10%;
+    --sidebar-primary: 215 55% 45%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 220 8% 94%;
+    --sidebar-accent-foreground: 215 60% 10%;
+    --sidebar-border: 220 8% 90%;
+    --sidebar-ring: 215 55% 45%;
+    
+    /* Muted & Secondary */
+    --muted: 220 10% 96%;
+    --muted-foreground: 215 10% 45%;
+    
+    --secondary: 220 10% 96%;
+    --secondary-foreground: 215 60% 10%;
+    
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 60% 10%;
+    
+    /* Status Colors */
+    --success: 160 70% 45%;
+    --success-foreground: 210 20% 98%;
+    
+    --warning: 45 100% 60%;
+    --warning-foreground: 215 60% 10%;
+    
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 20% 98%;
+    
+    --info: 200 80% 55%;
+    --info-foreground: 215 60% 10%;
+    
+    /* Borders & Inputs - Very light gray */
+    --border: 220 8% 90%;
+    --input: 220 8% 90%;
+    --ring: 215 55% 45%;
+    
+    /* Radius */
+    --radius: 0.75rem;
+    
+    /* Chart Colors */
+    --chart-1: 215 55% 45%;
+    --chart-2: 200 80% 55%;
+    --chart-3: 45 100% 60%;
+    --chart-4: 280 70% 60%;
+    --chart-5: 0 72% 55%;
+  }
+
+  .dark {
+    /* Dark Mode - Navy Blue Primary */
     --primary: 215 60% 10%;
     --primary-foreground: 210 20% 98%;
     
@@ -68,20 +137,12 @@
     --input: 215 25% 18%;
     --ring: 215 55% 45%;
     
-    /* Radius */
-    --radius: 0.75rem;
-    
     /* Chart Colors */
     --chart-1: 215 55% 45%;
     --chart-2: 200 80% 55%;
     --chart-3: 45 100% 60%;
     --chart-4: 280 70% 60%;
     --chart-5: 0 72% 55%;
-  }
-
-  .dark {
-    --primary: 215 60% 10%;
-    --primary-foreground: 210 20% 98%;
   }
 }
 
@@ -116,12 +177,22 @@
   }
   
   .glow-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08),
+                0 1px 2px rgba(0, 0, 0, 0.04),
+                0 0 1px hsl(var(--border));
+  }
+  
+  .dark .glow-card {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4),
                 0 0 1px hsl(var(--border));
   }
   
   /* Gradient Backgrounds */
   .gradient-card {
+    background: hsl(var(--card));
+  }
+  
+  .dark .gradient-card {
     background: linear-gradient(
       135deg,
       hsl(var(--card)) 0%,
@@ -138,6 +209,10 @@
   }
   
   .gradient-sidebar {
+    background: hsl(var(--sidebar-background));
+  }
+  
+  .dark .gradient-sidebar {
     background: linear-gradient(
       180deg,
       hsl(var(--sidebar-background)) 0%,
@@ -162,6 +237,12 @@
   
   .metric-card:hover {
     @apply border-accent/30;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.06),
+                0 0 40px hsl(var(--accent) / 0.05);
+  }
+  
+  .dark .metric-card:hover {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5),
                 0 0 40px hsl(var(--accent) / 0.1);
   }
@@ -208,6 +289,10 @@
   }
   
   .recharts-tooltip-cursor {
+    fill: rgba(0, 0, 0, 0.05) !important;
+  }
+  
+  .dark .recharts-tooltip-cursor {
     fill: rgba(255, 255, 255, 0.1) !important;
   }
 }

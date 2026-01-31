@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   ThumbsUp,
+  Settings,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -18,6 +19,7 @@ const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
   { icon: MessageSquare, label: 'Chats', href: '/conversations' },
   { icon: ThumbsUp, label: 'Feedback', href: '/feedback' },
+  { icon: Settings, label: 'Mehr', href: '/settings' },
 ];
 
 export const MobileBottomNav = () => {
