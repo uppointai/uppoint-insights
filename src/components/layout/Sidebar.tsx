@@ -131,20 +131,6 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
             </div>
           </nav>
 
-          {/* Bottom Navigation */}
-          <div className="py-4 px-3 border-t border-sidebar-border">
-            <div className="space-y-1">
-              {bottomNavItems.map((item) => (
-                <NavButton
-                  key={item.label}
-                  item={item}
-                  collapsed={collapsed}
-                  onMobileClose={onMobileClose}
-                />
-              ))}
-            </div>
-          </div>
-
           {/* Collapse Toggle - Desktop Only */}
           <button
             onClick={() => setCollapsed(!collapsed)}
@@ -205,19 +191,6 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
                 </div>
               </nav>
 
-              {/* Bottom Navigation */}
-              <div className="py-4 px-3 border-t border-sidebar-border safe-area-bottom">
-                <div className="space-y-1">
-                  {bottomNavItems.map((item) => (
-                    <NavButton
-                      key={item.label}
-                      item={item}
-                      collapsed={false}
-                      onMobileClose={onMobileClose}
-                    />
-                  ))}
-                </div>
-              </div>
             </motion.aside>
           )}
         </AnimatePresence>
