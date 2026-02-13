@@ -29,7 +29,7 @@ const Feedback = () => {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [feedbackFilter, setFeedbackFilter] = useState<'all' | 'thumbs_up' | 'thumbs_down'>('all');
-  const [selectedFeedback, setSelectedFeedback] = useState<{ sessionId: string; responseTimestamp: number; feedbackType: 'thumbs_up' | 'thumbs_down' } | null>(null);
+  const [selectedFeedback, setSelectedFeedback] = useState<{ sessionId: string; responseTimestamp: number; feedbackType: 'thumbs_up' | 'thumbs_down'; comment: string | null } | null>(null);
   const itemsPerPage = 10;
 
   // Fetch session details when a feedback is selected for viewing conversation
@@ -252,6 +252,7 @@ const Feedback = () => {
                           sessionId: item.sessionId,
                           responseTimestamp: item.responsetimestamp,
                           feedbackType: item.feedback as 'thumbs_up' | 'thumbs_down',
+                          comment: item.comment ?? null,
                         });
                       }}
                       formatDate={formatDate}
@@ -306,6 +307,7 @@ const Feedback = () => {
           sessionId={selectedFeedback?.sessionId || null}
           responseTimestamp={selectedFeedback?.responseTimestamp || null}
           feedbackType={selectedFeedback?.feedbackType || null}
+          comment={selectedFeedback?.comment ?? null}
           open={!!selectedFeedback}
           onOpenChange={(open) => {
             if (!open) setSelectedFeedback(null);
@@ -402,6 +404,12 @@ function FeedbackRow({ item, expanded, onToggle, onViewConversation, formatDate 
                 <h4 className="font-semibold text-sm">Zugehörige Chat-Daten:</h4>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                {item.comment && item.comment.trim() !== '' && (
+                  <div className="md:col-span-2">
+                    <span className="text-muted-foreground">Kommentar:</span>
+                    <p className="mt-1 font-medium whitespace-pre-wrap">{item.comment}</p>
+                  </div>
+                )}
                 {item.username && item.username.trim() !== '' && (
                   <div>
                     <span className="text-muted-foreground">Username:</span>

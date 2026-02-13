@@ -25,6 +25,7 @@ interface FeedbackConversationModalProps {
   sessionId: string | null;
   responseTimestamp: number | null;
   feedbackType: 'thumbs_up' | 'thumbs_down' | null;
+  comment: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   sessionDetail: SessionDetail | undefined;
@@ -36,6 +37,7 @@ export const FeedbackConversationModal = ({
   sessionId,
   responseTimestamp,
   feedbackType,
+  comment,
   open,
   onOpenChange,
   sessionDetail,
@@ -155,6 +157,12 @@ export const FeedbackConversationModal = ({
                   <DialogTitle className="text-xl mb-2">
                     Vollständige Konversation
                   </DialogTitle>
+                  {comment && comment.trim() !== '' && (
+                    <div className="mb-3 p-3 rounded-lg bg-muted/50 border border-border">
+                      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Kommentar</span>
+                      <p className="mt-1 text-sm text-foreground whitespace-pre-wrap">{comment}</p>
+                    </div>
+                  )}
                   <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                     <div className="font-mono text-xs">{sessionDetail.session_id}</div>
                     <div className="flex items-center gap-1">
